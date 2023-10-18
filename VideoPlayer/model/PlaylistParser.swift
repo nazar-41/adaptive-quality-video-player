@@ -34,7 +34,7 @@ fileprivate struct HLS {
 
 /// The playlist parser may need to retrieve and parse
 /// additional playlists referenced in master files.
-protocol MediaPlaylistProvider: class {
+protocol MediaPlaylistProvider: AnyObject {
     func mediaPlaylistData(at url: URL) -> String?
 }
 

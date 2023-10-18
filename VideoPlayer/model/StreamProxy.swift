@@ -24,12 +24,12 @@ struct HTTP {
 }
 
 /// Delegates receive status updates from the proxy
-protocol StreamProxyDelegate: class {
+protocol StreamProxyDelegate: AnyObject {
     func streamProxy(_ proxy: StreamProxy, didReceiveMainPlaylist playlist: Playlist)
 }
 
 /// Segment replacement policies
-protocol StreamProxyPolicy: class {
+protocol StreamProxyPolicy: AnyObject {
     func streamProxy(_ proxy: StreamProxy, replacementForSegment segment: Segment) -> Segment
 }
 
@@ -171,7 +171,7 @@ class StreamProxy: GCDWebServer {
     /// Returns an "internal server error" response
     private func internalErrorResponse(withError error: Error?, data: Data?) -> GCDWebServerResponse {
         let dataString = data.flatMap({ String(data: $0, encoding: .utf8) })
-        let errorMsg = "Error: \(error?.localizedDescription)\nData: \(dataString)"
+        let errorMsg = "Error: \(String(describing: error?.localizedDescription))\nData: \(String(describing: dataString))"
         return errorResponse(withStatusCode: HTTP.ResponseCode.internalServerError, message: errorMsg)
     }
     
@@ -214,7 +214,7 @@ private extension URLRequest {
         self.init(url: otherUrl, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 32000)
         
         httpMethod = request.method
-        allHTTPHeaderFields = request.headers as! [String : String]?
+        allHTTPHeaderFields = request.headers as [String : String]?
         allHTTPHeaderFields?["Host"] = otherUrl.host
         
         if request.hasBody() {
